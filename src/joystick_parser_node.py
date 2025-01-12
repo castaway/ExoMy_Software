@@ -73,6 +73,19 @@ def callback(data):
             "select_button": 6,
             "sensitivity": 0.11
         }
+    elif rospy.get_param("controller") == "8BitDo Lite SE":
+        controller_funtion_map = {
+            "x_axis": 0,
+            "y_axis": 1,
+            "invert_x_axis": False,
+            "X_button": 0,
+            "Y_button": 3,
+            "A_button": 1,
+            "B_button": 2,
+            "start_button": 9,
+            "select_button": 8,
+            "sensitivity": 0.0
+        }
     else:
         rospy.logerr("No controller identified. Using fallback.")
         controller_funtion_map = {

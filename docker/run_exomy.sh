@@ -62,10 +62,11 @@ if [ -n "$RUNNING_CONTAINERS" ]; then
     docker rm -f "$RUNNING_CONTAINERS"
 fi
 
-# Run docker container
+# Run docker container -it
 docker run \
-    -it \
+    -t \
     -v ~/ExoMy_Software:/root/exomy_ws/src/exomy \
+    -v /dev/input:/dev/input \
     -p 8000:8000 \
     -p 8080:8080 \
     -p 9090:9090 \
