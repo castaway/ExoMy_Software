@@ -1,18 +1,28 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.14.4)
 project(exomy)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS
-  rospy
-  std_msgs
-  sensor_msgs
-  message_generation
-)
+find_package(ament_cmake_ros REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rospy REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+
+# find_package(catkin REQUIRED COMPONENTS
+#   rospy
+#   std_msgs
+#   sensor_msgs
+#   message_generation
+# )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -49,12 +59,13 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-add_message_files(
-      FILES
-      RoverCommand.msg
-      MotorCommands.msg
-      Screen.msg
-  )
+# add_message_files(
+#       FILES
+#       RoverCommand.msg
+#       MotorCommands.msg
+#       Screen.msg
+#   )
+
 ## Generate services in the 'srv' folder
 # add_service_files(
 #   FILES
@@ -70,12 +81,18 @@ add_message_files(
 # )
 
 ## Generate added messages and services with any dependencies listed here
- generate_messages(
-   DEPENDENCIES
-   sensor_msgs
-   std_msgs
- )
+ # generate_messages(
+ #   DEPENDENCIES
+ #   sensor_msgs
+ #   std_msgs
+ # )
 
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "RoverCommand.msg"
+  "MotorCommands.msg"
+  "Screen.msg"
+)
+	  
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
 ################################################
@@ -105,11 +122,19 @@ add_message_files(
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
+
+#catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES exomy
-   CATKIN_DEPENDS rospy std_msgs sensor_msgs message_runtime
+#   CATKIN_DEPENDS rospy std_msgs sensor_msgs message_runtime
 #  DEPENDS python-rpi.gpio
+#)
+
+ament_export_dependencies(
+  rospy
+  std_msgs
+  sensor_msgs
+  message_runtime
 )
 
 ###########
@@ -118,10 +143,14 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(
+#include_directories(
 # include
-  ${catkin_INCLUDE_DIRS}
-)
+#  ${catkin_INCLUDE_DIRS}
+#)
+
+target_include_directories(exomy PUBLIC
+  "<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  "<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -201,3 +230,5 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+ament_package()
