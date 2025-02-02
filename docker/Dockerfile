@@ -30,7 +30,7 @@ RUN apt-get update && \
 # RUN mkdir -p ~/camera_ws/src
 # RUN cd ~/camera_ws/src
 
-# # check out libcamera
+# # check out libcamera dependencies
 # RUN  apt -y install python3-colcon-meson python3-jinja2 python3-ply
 
 # # Option A: official upstream

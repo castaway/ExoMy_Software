@@ -51,40 +51,40 @@ def generate_launch_description():
             ]
         ),
         launch_ros.actions.Node(
-            package='usb_cam',
-            executable='usb_cam_node',
+            package='camera_ros',
+            executable='camera_node',
             name='pi_cam',
             output='screen',
             parameters=[
+                # {
+                #     'framerate': '10'
+                # },
                 {
-                    'framerate': '10'
+                    'camera': '/dev/video0'
                 },
                 {
-                    'video_device': '/dev/video0'
+                    'width': 640
                 },
                 {
-                    'image_width': '640'
+                    'height': 480
                 },
-                {
-                    'image_height': '480'
-                },
-                {
-                    'pixel_format': 'yuyv'
-                },
-                {
-                    'camera_frame_id': 'pi_cam'
-                },
-                {
-                    'io_method': 'mmap'
-                }
+                # {
+                #     'pixel_format': 'yuyv'
+                # },
+                # {
+                #     'camera_frame_id': 'pi_cam'
+                # },
+                # {
+                #     'io_method': 'mmap'
+                # }
             ]
         ),
-        launch.actions.IncludeLaunchDescription(
-            launch.launch_description_sources.PythonLaunchDescriptionSource(
-                os.path.join(get_package_share_directory(
-                    'rosbridge_server'), 'launch/rosbridge_websocket.launch.py')
-            )
-        )
+        # launch.actions.IncludeLaunchDescription(
+        #     launch.launch_description_sources.PythonLaunchDescriptionSource(
+        #         os.path.join(get_package_share_directory(
+        #             'rosbridge_server'), 'launch/rosbridge_websocket_launch.xml')
+        #     )
+        # )
     ])
     return ld
 

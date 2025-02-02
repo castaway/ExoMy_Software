@@ -13,9 +13,9 @@ endif()
 ## is used, also find other catkin packages
 find_package(ament_cmake_ros REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(rospy REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
 
 # find_package(catkin REQUIRED COMPONENTS
 #   rospy
@@ -58,39 +58,10 @@ find_package(sensor_msgs REQUIRED)
 ##   * uncomment the generate_messages entry below
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
-## Generate messages in the 'msg' folder
-# add_message_files(
-#       FILES
-#       RoverCommand.msg
-#       MotorCommands.msg
-#       Screen.msg
-#   )
-
-## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
-
-## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
-
-## Generate added messages and services with any dependencies listed here
- # generate_messages(
- #   DEPENDENCIES
- #   sensor_msgs
- #   std_msgs
- # )
-
 rosidl_generate_interfaces(${PROJECT_NAME}
-  "RoverCommand.msg"
-  "MotorCommands.msg"
-  "Screen.msg"
+  "msg/RoverCommand.msg"
+  "msg/MotorCommands.msg"
+  "msg/Screen.msg"
 )
 	  
 ################################################
@@ -113,28 +84,11 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 #   cfg/DynReconf2.cfg
 # )
 
-###################################
-## catkin specific configuration ##
-###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if your package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
-
-#catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES exomy
-#   CATKIN_DEPENDS rospy std_msgs sensor_msgs message_runtime
-#  DEPENDS python-rpi.gpio
-#)
 
 ament_export_dependencies(
   rospy
   std_msgs
   sensor_msgs
-  message_runtime
 )
 
 ###########
@@ -148,9 +102,13 @@ ament_export_dependencies(
 #  ${catkin_INCLUDE_DIRS}
 #)
 
-target_include_directories(exomy PUBLIC
-  "<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-  "<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
+# new for ros2 but fails:
+# CMake Error at CMakeLists.txt:105 (target_include_directories):
+#  target_include_directories called with non-compilable target type
+
+# target_include_directories(exomy PUBLIC
+#   "<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+#   "<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -217,6 +175,22 @@ target_include_directories(exomy PUBLIC
 #   # myfile2
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
+
+
+install(DIRECTORY
+  launch scripts
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+install(PROGRAMS
+  src/joystick_parser_node.py
+  src/locomotion_modes.py
+  src/motor_node.py
+  src/motors.py
+  src/robot_node.py
+  src/rover.py
+  DESTINATION lib/${PROJECT_NAME}/
+)
 
 #############
 ## Testing ##
